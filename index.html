@@ -1,0 +1,1673 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebGIS Kota Bandung</title>
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css" />
+  <link rel="stylesheet" href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+:root {
+  /* Extended Emerald Color Palette */
+  --primary: #0A5C4C;         /* Deep glossy emerald */
+  --secondary: #0D7A62;       /* Medium glossy emerald */
+  --tertiary: #12A887;        /* Light glossy emerald */
+  --accent: #F4FBF9;          /* Off-white with slight green tint */
+  --dark: #1A2A32;            /* Rich dark slate for text */
+  --light: #F9FFFB;           /* Very light green-white */
+  --neutral: #D6EAE0;         /* Light emerald gray */
+  --shadow: rgba(10, 92, 76, 0.2); /* Emerald shadow */
+  --highlight: #1FD3AC;       /* Bright emerald highlight */
+  --glass: rgba(12, 107, 88, 0.08); /* Transparent emerald for glass effects */
+  
+  /* Extended Palette (New Colors) */
+  --deep-emerald: #064237;    /* Deeper than primary */
+  --forest-emerald: #08503F;  /* Between deep and primary */
+  --jade: #15B99A;            /* Slightly bluer than tertiary */
+  --mint: #A8E6CE;            /* Light pastel green */
+  --seafoam: #61D095;         /* Medium light green */
+  --teal: #169986;            /* Blue-green variant */
+  --emerald-black: #132E25;   /* Very dark emerald for strong contrast */
+  --emerald-glow: rgba(18, 168, 135, 0.6); /* For glow effects */
+  --glass-strong: rgba(12, 107, 88, 0.15); /* Stronger glass effect */
+  --emerald-white: #EFFFFA;   /* Pure emerald white */
+  
+  /* Classic Gold Colors */
+  --gold-primary: #D4AF37;    /* Classic gold */
+  --gold-light: #F7E98E;      /* Light gold */
+  --gold-dark: #B8860B;       /* Dark gold */
+  --gold-accent: #FFD700;     /* Bright gold accent */
+  --gold-shadow: rgba(212, 175, 55, 0.3); /* Gold shadow */
+  --gold-glow: rgba(255, 215, 0, 0.4); /* Gold glow effect */
+}
+
+body, html { 
+  margin: 0; 
+  padding: 0; 
+  font-family: 'Montserrat', 'Quicksand', 'Poppins', sans-serif;
+  scroll-behavior: smooth;
+  color: var(--dark);
+  background-color: var(--light);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Enhanced Circular Header Styles */
+header {
+  background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+  color: white; 
+  padding: 1rem;
+  display: flex; 
+  justify-content: space-between; 
+  align-items: center;
+  position: fixed;
+  top: 0; 
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  box-shadow: 0 3px 12px var(--shadow);
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  backdrop-filter: blur(5px);
+}
+
+header .logo { 
+  display: flex; 
+  align-items: center; 
+  gap: 1rem; 
+  perspective: 800px;
+}
+
+/* New 3D Rotate Animation for Logo */
+header .logo img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--highlight);
+  transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 0 0 rgba(31, 211, 172, 0.4);
+  transform-style: preserve-3d;
+  position: relative;
+  overflow: hidden;
+}
+
+header .logo img::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  top: -100%;
+  left: -100%;
+  transition: all 0.5s ease;
+}
+
+header .logo img:hover {
+  transform: rotate3d(0, 1, 0.5, 30deg);
+  box-shadow: 0 0 20px var(--emerald-glow);
+  border-color: var(--jade);
+}
+
+header .logo img:hover::before {
+  top: 100%;
+  left: 100%;
+}
+
+header .logo h2 {
+  font-weight: 600;
+  margin: 0;
+  color: white;
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+header nav ul { 
+  list-style: none; 
+  display: flex; 
+  gap: 1.5rem; 
+  margin: 0; 
+  padding: 0; 
+}
+
+/* Enhanced navigation links with border animation */
+header nav a { 
+  color: white; 
+  text-decoration: none; 
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  position: relative;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  overflow: hidden;
+  z-index: 1;
+}
+
+header nav a:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-top: 2px solid var(--emerald-white);
+  border-bottom: 2px solid var(--emerald-white);
+  transform: scaleY(2);
+  opacity: 0;
+  transition: 0.3s;
+}
+
+header nav a:after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--tertiary);
+  transform: scale(0);
+  opacity: 0;
+  transition: 0.3s;
+  z-index: -1;
+  border-radius: 18px;
+}
+
+header nav a:hover {
+  color: white;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+header nav a:hover:before {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+header nav a:hover:after {
+  transform: scaleY(1);
+  opacity: 1;
+}
+
+/* Account for fixed header */
+body {
+  padding-top: 90px;
+}
+
+/* Circular Hero Section */
+.hero-section {
+  background:url('asset/Isola.jpg') center/cover no-repeat;
+  color: white;
+  text-align: center;
+  padding: 7rem 2rem;
+  position: relative;
+  border-radius: 0 0 15% 15%;
+  margin-bottom: 3rem;
+  overflow: hidden;
+}
+
+.hero-content {
+  max-width: 900px;
+  margin: 0 auto;
+  z-index: 2;
+  position: relative;
+}
+
+.hero-section::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(10, 92, 76, 0.6), rgba(13, 122, 98, 0.5));
+  backdrop-filter: blur(1px);
+  z-index: 1;
+}
+
+.hero-section h1 {
+  font-size: 2.8rem;
+  margin-bottom: 1.2rem;
+  color: white;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.hero-section p {
+  font-size: 1.15rem;
+  margin-bottom: 2rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.95;
+}
+
+/* Enhanced 3D CTA Button */
+.cta-button {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--tertiary), var(--jade));
+  color: white;
+  padding: 0.8rem 2rem;
+  border-radius: 30px;
+  font-size: 1rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(18, 168, 135, 0.3);
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transform-style: preserve-3d;
+}
+
+.cta-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.7s ease;
+  z-index: -1;
+}
+
+.cta-button:after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 50%,
+    transparent 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cta-button:hover {
+  transform: translateY(-3px) perspective(500px) rotateX(10deg);
+  box-shadow: 0 10px 20px var(--emerald-glow);
+  background: linear-gradient(135deg, var(--jade), var(--highlight));
+}
+
+.cta-button:hover:before {
+  left: 100%;
+}
+
+.cta-button:hover:after {
+  opacity: 1;
+}
+
+/* Circular Section Header */
+.section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.section-header h2 {
+  color: var(--primary);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--jade), var(--tertiary));
+  transition: width 0.6s ease;
+  border-radius: 2px;
+}
+
+.section-header:hover h2::after {
+  width: 100%;
+}
+
+.section-header p {
+  color: var(--dark);
+  max-width: 800px;
+  margin: 1rem auto 0;
+  opacity: 0.85;
+}
+
+/* Circular Map Section */
+#map-section { 
+  padding: 5rem 2rem; 
+  background: linear-gradient(to bottom, var(--light), var(--accent));
+  border-radius: 50px;
+  margin: 0 2rem;
+  position: relative;
+  box-shadow: inset 0 0 30px var(--glass);
+}
+
+#map-section::before {
+  content: '';
+  position: absolute;
+  top: -30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, var(--tertiary), var(--jade));
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 15px var(--shadow);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#map-section:hover::before {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 5px 20px var(--emerald-glow);
+}
+
+.map-container {
+  position: relative;
+  margin-top: 2rem;
+}
+
+#map { 
+  height: 500px; 
+  width: 100%; 
+  border-radius: 25px;
+  box-shadow: 0 8px 30px var(--shadow);
+  overflow: hidden;
+  transition: all 0.5s ease;
+}
+
+#map:hover {
+  box-shadow: 0 12px 40px var(--emerald-glow);
+  transform: translateY(-5px);
+}
+
+.map-tools {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.tool-button {
+  padding: 0.7rem 1.4rem;
+  background: linear-gradient(135deg, var(--secondary), var(--tertiary));
+  color: white;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-shadow: 0 2px 6px var(--shadow);
+  overflow: hidden;
+  position: relative;
+}
+
+.tool-button:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  transform: translateX(-100%) skewX(-15deg);
+  transition: transform 0.5s ease;
+}
+
+.tool-button:hover {
+  background: linear-gradient(135deg, var(--jade), var(--highlight));
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 5px 12px var(--emerald-glow);
+}
+
+.tool-button:hover:before {
+  transform: translateX(100%) skewX(-15deg);
+}
+
+.tool-button i {
+  font-size: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.tool-button:hover i {
+  transform: rotate(15deg);
+}
+
+/* Enhanced 3D Card Styles - Modified Layout (2 Top, 3 Bottom) and Emerald-Gold Theme */
+.info-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin: 3rem auto;
+  max-width: 1200px;
+  padding: 0 2rem;
+  perspective: 1000px;
+}
+
+.info-cards .info-card:nth-child(3),
+.info-cards .info-card:nth-child(4),
+.info-cards .info-card:nth-child(5) {
+  grid-column: span 1;
+}
+
+.info-cards .info-card:nth-child(3) {
+  grid-column: 1 / 2;
+  grid-row: 2;
+}
+
+.info-cards .info-card:nth-child(4) {
+  grid-column: 2 / 3;
+  grid-row: 2;
+}
+
+.info-cards .info-card:nth-child(5) {
+  grid-column: 1 / 3;
+  grid-row: 3;
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* For responsive: Make bottom 3 cards full width on smaller screens */
+@media (max-width: 768px) {
+  .info-cards {
+    grid-template-columns: 1fr;
+  }
+  
+  .info-cards .info-card:nth-child(3),
+  .info-cards .info-card:nth-child(4),
+  .info-cards .info-card:nth-child(5) {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+
+.info-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 248, 248, 0.9));
+  padding: 2rem;
+  border-radius: 25px;
+  box-shadow: 0 5px 15px var(--shadow);
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(2px);
+  border: 2px solid var(--gold-light);
+  transform-style: preserve-3d;
+  transform: translateY(0) rotateX(0);
+}
+
+.info-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--primary), var(--gold-primary), var(--jade));
+  border-radius: 25px 25px 0 0;
+  transition: height 0.4s ease;
+}
+
+.info-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(10, 92, 76, 0.05) 0%,
+    rgba(212, 175, 55, 0.05) 50%,
+    rgba(18, 168, 135, 0.05) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.info-card:hover {
+  transform: translateY(-20px) rotateX(10deg);
+  box-shadow: 0 20px 40px var(--gold-shadow), 0 10px 20px var(--shadow);
+  border-color: var(--gold-primary);
+}
+
+.info-card:hover::before {
+  height: 8px;
+}
+
+.info-card:hover::after {
+  opacity: 1;
+}
+
+.info-card h3 {
+  background: linear-gradient(135deg, var(--primary), var(--gold-primary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--primary);
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.25rem;
+  padding-bottom: 0.8rem;
+  position: relative;
+  text-align: center;
+}
+
+.info-card h3::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 30%;
+  right: 30%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--gold-light), var(--gold-primary), var(--gold-light));
+  border-radius: 2px;
+  transition: all 0.4s ease;
+}
+
+.info-card:hover h3::after {
+  left: 20%;
+  right: 20%;
+  background: linear-gradient(90deg, var(--primary), var(--gold-accent), var(--jade));
+}
+
+.info-card p {
+  font-size: 0.95rem;
+  color: var(--dark);
+  line-height: 1.7;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.info-card:hover p {
+  color: var(--primary);
+}
+
+/* Enhanced Image Style with 3D rotation - Gold Border */
+.info-image {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 1.5rem;
+  display: block;
+  border: 4px solid var(--gold-light);
+  box-shadow: 0 4px 10px var(--shadow), 0 0 0 rgba(212, 175, 55, 0);
+  transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  transform-style: preserve-3d;
+  outline: 0 solid transparent;
+  outline-offset: 0;
+}
+
+.info-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(45deg, transparent, rgba(255,215,0,0.1), transparent);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.info-card:hover .info-image {
+  border-color: var(--gold-primary);
+  transform: rotate3d(0.5, 1, 0.3, 15deg);
+  box-shadow: 0 10px 25px var(--gold-glow), 0 5px 15px var(--emerald-glow);
+  outline: 8px solid var(--gold-accent);
+  outline-offset: 14px;
+}
+
+.info-card:hover .info-image::before {
+  opacity: 1;
+}
+
+.info-icon {
+  text-align: center;
+  margin: 0.5rem 0 1rem;
+  background: linear-gradient(135deg, var(--tertiary), var(--gold-primary));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: var(--tertiary);
+  font-size: 1.2rem;
+  transition: all 0.5s ease;
+}
+
+.info-card:hover .info-icon {
+  transform: scale(1.2) rotate(15deg);
+}
+
+/* Circular Footer */
+footer {
+  background: linear-gradient(to bottom, var(--secondary), var(--primary)); 
+  color: var(--accent); 
+  padding: 4rem 2rem 2rem;
+  border-top-left-radius: 50% 10%;
+  border-top-right-radius: 50% 10%;
+  position: relative;
+  margin-top: 3rem;
+}
+
+footer::before {
+  content: '';
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--tertiary), var(--jade));
+  border-radius: 50%;
+  box-shadow: 0 0 20px rgba(31, 211, 172, 0.3);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+footer:hover::before {
+  transform: translateX(-50%) scale(1.1);
+  box-shadow: 0 0 30px var(--emerald-glow);
+}
+
+.footer-content {
+  display: flex;
+  justify-content: center;
+  gap: 60px;
+  flex-wrap: wrap;
+  text-align: left;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.footer-section {
+  max-width: 300px;
+  transition: all 0.4s ease;
+}
+
+.footer-section:hover {
+  transform: translateY(-5px);
+}
+
+.footer-section h3 {
+  color: white;
+  margin-bottom: 1.2rem;
+  position: relative;
+  font-weight: 600;
+  text-align: center;
+}
+
+.footer-section h3::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--jade), transparent);
+  transform: translateX(-50%);
+  border-radius: 2px;
+  transition: width 0.5s ease;
+}
+
+.footer-section:hover h3::after {
+  width: 80%;
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.contact-item:hover {
+  transform: translateX(5px);
+}
+
+/* Enhanced Social Icons with Perspective */
+.social-icons {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1.2rem;
+  justify-content: center;
+  perspective: 500px;
+}
+
+.social-icons a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  color: white;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-style: preserve-3d;
+}
+
+.social-icons a:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--tertiary), var(--jade));
+  transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: -1;
+  transform: translateZ(-1px);
+  opacity: 0;
+}
+
+.social-icons a:hover {
+  color: white;
+  transform: translateY(-5px) rotate3d(0.5, 1, 0.3, 30deg);
+  box-shadow: 0 8px 20px rgba(6, 66, 55, 0.4);
+}
+
+.social-icons a:hover:before {
+  top: 0;
+  opacity: 1;
+}
+
+.footer-developer {
+  text-align: center;
+  padding: 2rem 0 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  margin-top: 2rem;
+}
+
+.footer-developer h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: white;
+}
+
+.developer-info {
+  display: inline-block;
+  text-align: center;
+  transition: all 0.5s ease;
+  perspective: 800px;
+}
+
+.developer-info:hover {
+  transform: translateY(-5px);
+}
+
+/* Developer Photo with New 3D Hover Effect */
+.developer-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 10px;
+  border: 3px solid var(--tertiary);
+  transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 0 0 rgba(31, 211, 172, 0);
+  position: relative;
+  transform-style: preserve-3d;
+  overflow: hidden;
+}
+
+.developer-photo::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+  top: -100%;
+  left: -100%;
+  transition: all 0.5s ease;
+}
+
+.developer-info:hover .developer-photo {
+  border-color: var(--jade);
+  transform: rotate3d(0.5, 1, 0, 30deg);
+  box-shadow: 0 10px 30px var(--emerald-glow);
+}
+
+.developer-info:hover .developer-photo::before {
+  top: 100%;
+  left: 100%;
+}
+
+/* Map Legend with Enhanced Styling */
+.info.legend {
+  background: rgba(255,255,255,0.95);
+  padding: 15px;
+  border-radius: 20px;
+  box-shadow: 0 5px 15px var(--shadow);
+  line-height: 1.4;
+  color: var(--dark);
+  max-width: 220px;
+  font-size: 12px;
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-110%);
+  transition: all 0.4s ease;
+  backdrop-filter: blur(5px);
+  border: 1px solid var(--neutral);
+}
+
+.info.legend:hover {
+  transform: translateY(-110%) scale(1.05);
+  box-shadow: 0 8px 20px var(--emerald-glow);
+  border-color: var(--tertiary);
+}
+
+.info.legend h4 {
+  margin: 0 0 8px;
+  color: var(--primary);
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+  padding-bottom: 4px;
+  position: relative;
+}
+
+.info.legend h4::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--jade), transparent);
+  transform: translateX(-50%);
+  transition: width 0.4s ease;
+}
+
+.info.legend:hover h4::after {
+  width: 70%;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+  font-size: 11px;
+  transition: transform 0.3s ease;
+}
+
+.legend-item:hover {
+  transform: translateX(3
+    </style>
+
+}
+<header>
+  <div class="logo">
+    <img src="asset/FIXXXXXXXX.png" alt="Logo WebGIS Bandung" />
+    <h2>WebGIS Kota Bandung</h2>
+  </div>
+  <button class="menu-toggle" id="menu-toggle">
+    <i class="fas fa-bars"></i>
+  </button>
+  <nav id="main-nav">
+    <ul>
+      <li><a href="#hero-section"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="#map-section"><i class="fas fa-map"></i> Peta</a></li>
+      <li><a href="#info-section"><i class="fas fa-info-circle"></i></i> Informasi</a></li>
+      <li><a href="#footer"><i class="fas fa-envelope"></i> Kontak</a></li>
+    </ul>
+  </nav>
+</header>
+
+<section id="hero-section" class="hero-section">
+  <div class="hero-content">
+    <h1>Eksplorasi Spasial Kota Bandung</h1>
+    <p>Jelajahi data dan informasi geografis Kota Bandung secara interaktif melalui platform WebGIS ini. Temukan tutupan lahan, batas administrasi, dan informasi spasial lainnya.</p>
+    <a href="#map-section" class="cta-button"><i class="fas fa-map-marker-alt"></i> Mulai Eksplorasi</a>
+  </div>
+</section>
+
+<section id="map-section">
+  <div class="section-header">
+    <h2>Peta Interaktif Kota Bandung</h2>
+    <p>Visualisasi data spasial Kota Bandung dengan berbagai lapisan informasi geografis</p>
+  </div>
+  <div class="map-container">
+    <div id="map"></div>
+    <div class="map-tools">
+      <button class="tool-button" id="reset-view"><i class="fas fa-home"></i> Reset View</button>
+      <button class="tool-button" id="toggle-legend"><i class="fas fa-list"></i> Legend</button>
+      <button class="tool-button" id="measure-tool"><i class="fas fa-ruler"></i> Ukur Jarak</button>
+    </div>
+  </div>
+</section>
+<section id="info-section">
+  <div class="section-header">
+    <h2>Informasi Kota Bandung</h2>
+    <p>Bandung menjadi kota sejuta cerita dengan beragam keindahan.</p>
+  </div>
+<div class="info-cards">
+  <div class="info-card">
+    <img src="asset/BRAGA.jpg" alt="Kawah Putih" class="info-image">
+    <h3>Wisata</h3>
+    <p>Destinasi populer di Bandung mencakup kawasan Braga, Lembang, Ciwidey, Pangalengan, dan kawasan Dago. Kawasan ini menyajikan kombinasi alam, sejarah, dan hiburan modern. 
+  </div>
+  <div class="info-card">
+    <img src="asset/upi 2.jpg" alt="Kota Kreatif" class="info-image">
+    <h3>Fakta Menarik</h3>
+    <p>Bandung menjadi pilihan favorit mahasiswa karena banyaknya kampus ternama dan suasananya yang sejuk, seperti UPI, ITB, UNPAD, UNPAR, BINUS, dan TELKOM.<br><small>https://www.transentertainment.com/</small></p>
+  </div>
+  <div class="info-card">
+  <img src="asset/CUACA.jpg" alt="Kualitas Udara Bandung" class="info-image">
+  <h3>Kualitas Udara Bandung</h3>
+  <p id="aqi-info">Memuat data AQI...</p>
+</div>
+ <div class="info-card" id="weather-card">
+  <img src="asset/UDARA.jpg" alt="Cuaca Bandung" class="info-image">
+  <h3>Laporan Cuaca</h3>
+  <p id="weather-info">Memuat data cuaca...</p>
+</div>
+  <div class="info-card">
+    <img src="asset/GDSATE.jpg" alt="Peta Bandung" class="info-image">
+    <h3>Informasi Spasial</h3>
+    <p>Koordinat: 6.9175° S, 107.6191° E | Luas: ±167 km². Bandung terletak dalam cekungan Bandung dan dikelilingi pegunungan. <br><small>Sumber: Bappeda Kota Bandung</small></p>
+  </div>
+</section>
+
+<footer id="footer">
+  <div class="footer-content">
+    <div class="footer-section">
+      <h3>Tentang WebGIS Kota Bandung</h3>
+      <p>Web GIS interaktif untuk menampilkan dan menganalisis data spasial Kota Bandung. Dikembangkan sebagai alat bantu perencanaan, pemantauan lingkungan, dan edukasi geospasial bagi masyarakat.</p>
+    </div>
+
+    <div class="footer-section">
+      <h3>Kontak Kami</h3>
+      <div class="contact-info">
+        <div class="contact-item">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Gang. Mandiri Sekemala No 214</span>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-envelope"></i>
+          <span>mhoernurodin@upi.edu</span>
+        </div>
+        <div class="contact-item">
+          <i class="fas fa-phone"></i>
+          <span>+62 85722716487</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-developer">
+    <h3>Tentang Pengembang</h3>
+    <div class="developer-info">
+      <img src="./asset/Muhamad Hoer Nurodin_fix.jpg" alt="Foto Muhamad Hoer Nurodin" class="developer-photo">
+      <div class="developer-text">
+        <p><strong>Muhamad Hoer Nurodin</strong></p>
+        <p>Mahasiswa Sains Informasi Geografi, Universitas Pendidikan Indonesia</p>
+        <p>NIM: 2310348 | Angkatan 2023</p>
+        <p>Website ini dibuat sebagai bagian dari tugas mata kuliah WebGIS. Menggunakan teknologi HTML, CSS, dan JavaScript.</p>
+        <div class="social-icons">
+          <a href="https://www.linkedin.com/in/muhamad-hoer-nurodin-7b8750271/" target="_blank"><i class="fab fa-linkedin"></i></a>
+          <a href="https://www.instagram.com/mkhoerr.n?igsh=MXI3cm1jZHBrb2Fidw==" target="_blank"><i class="fab fa-instagram"></i></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="copyright">
+    <p>© 2025 WebGIS Kota Bandung</p>
+  </div>
+</footer>
+
+<!-- JavaScript Libraries -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+<script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+<script src="https://unpkg.com/leaflet-measure@2.1.7/dist/leaflet-measure.js"></script>
+
+<script>
+// Mobile Menu Toggle
+document.getElementById('menu-toggle').addEventListener('click', function() {
+  document.getElementById('main-nav').classList.toggle('active');
+});
+
+// Smooth Scrolling for Navigation Links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    document.querySelector(this.getAttribute('href')).scrollIntoView({
+      behavior: 'smooth'
+    });
+  });
+});
+
+// Initialize map with custom options
+const map = L.map('map', {
+  zoomControl: false,
+  attributionControl: false
+}).setView([-6.903, 107.6510], 13);
+
+// Custom zoom control position
+L.control.zoom({
+  position: 'bottomright'
+}).addTo(map);
+
+// Custom attribution
+L.control.attribution({
+  position: 'bottomleft',
+  prefix: '© WebGIS Kota Bandung | Data by OpenStreetMap'
+}).addTo(map);
+
+// Basemaps with custom styles
+const basemapOSM = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '&copy; OpenStreetMap'
+}).addTo(map);
+
+const osmHOT = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap contributors, HOT'
+});
+
+const baseMapGoogle = L.tileLayer('https://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}', {
+  maxZoom: 20,
+  attribution: 'Map by Google',
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+});
+
+const satelliteMapGoogle = L.tileLayer('https://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+  maxZoom: 20,
+  attribution: 'Imagery by Google',
+  subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+});
+
+const darkMap = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; CartoDB',
+  subdomains: 'abcd',
+  maxZoom: 19
+});
+
+// Controls with custom styling
+// Fullscreen control
+map.addControl(new L.Control.Fullscreen({
+  position: 'topright',
+  title: {
+    'false': 'View Fullscreen',
+    'true': 'Exit Fullscreen'
+  }
+}));
+
+// Home button for resetting view
+const homeButton = L.easyButton({
+  position: 'topright',
+  states: [{
+    stateName: 'default-state',
+    icon: 'fa-home',
+    title: 'Reset View',
+    onClick: function(btn, map) {
+      map.setView([-6.903, 107.6510], 13);
+    }
+  }]
+});
+homeButton.addTo(map);
+
+// Locate control with custom options
+const locateControl = L.control.locate({
+  position: 'topright',
+  strings: {
+    title: "Lokasi Saya"
+  },
+  locateOptions: {
+    enableHighAccuracy: true,
+    maxZoom: 16
+  }
+}).addTo(map);
+
+// Set up the measure control
+const measureControl = L.control.measure({
+  position: 'topright',
+  primaryLengthUnit: 'meters',
+  secondaryLengthUnit: 'kilometers',
+  primaryAreaUnit: 'sqmeters',
+  secondaryAreaUnit: 'hectares',
+  activeColor: '#BE5B50',
+  completedColor: '#641B2E'
+});
+measureControl.addTo(map);
+
+
+// Variables for layer states
+let legendVisible = true;
+let measureActive = false;
+
+// Reset view button functionality
+document.getElementById('reset-view').addEventListener('click', function() {
+  map.setView([-6.903, 107.6510], 13);
+});
+
+// Toggle legend button functionality
+document.getElementById('toggle-legend').addEventListener('click', function() {
+  if (legendVisible) {
+    document.querySelector('.info.legend').style.display = 'none';
+    legendVisible = false;
+    this.innerHTML = '<i class="fas fa-list"></i> Show Legend';
+  } else {
+    document.querySelector('.info.legend').style.display = 'block';
+    legendVisible = true;
+    this.innerHTML = '<i class="fas fa-list"></i> Hide Legend';
+  }
+});
+
+// Measure tool button functionality
+document.getElementById('measure-tool').addEventListener('click', function() {
+  if (measureActive) {
+    map.removeControl(measureControl);
+    measureActive = false;
+    this.innerHTML = '<i class="fas fa-ruler"></i> Ukur Jarak';
+  } else {
+    measureControl.addTo(map);
+    measureActive = true;
+    this.innerHTML = '<i class="fas fa-times"></i> Tutup Ukur';
+  }
+});
+
+
+// Enhanced point symbology
+const symbologyPoint = {
+  radius: 8,
+  fillColor: "#8A2D3B",
+  color: "#641B2E",
+  weight: 2,
+  opacity: 1,
+  fillOpacity: 0.8
+};
+
+// Layer: Jembatan PT
+const jembatanPT = L.layerGroup();
+$.getJSON("./asset/data-spasial/jembatan_pt.geojson", function (data) {
+  L.geoJSON(data, {
+    pointToLayer: function (feature, latlng) {
+      return L.circleMarker(latlng, symbologyPoint).on('mouseover', function (e) {
+        this.setStyle({
+          radius: 12,
+          fillColor: "#FBDB93"
+        });
+      }).on('mouseout', function (e) {
+        this.setStyle(symbologyPoint);
+      });
+    },
+    onEachFeature: function(feature, layer) {
+      if (feature.properties) {
+        const popupContent = `
+          <div class="custom-popup">
+            <div class="popup-header">Informasi Jembatan</div>
+            <div class="popup-content">
+              <p><strong>ID:</strong> ${feature.properties.id || 'N/A'}</p>
+              <p><strong>Nama:</strong> ${feature.properties.name || 'Jembatan'}</p>
+              <p><strong>Kondisi:</strong> ${feature.properties.condition || 'Baik'}</p>
+            </div>
+          </div>
+        `;
+        layer.bindPopup(popupContent);
+      }
+    }
+  }).addTo(jembatanPT);
+});
+jembatanPT.addTo(map);
+
+// Layer: Administrasi Kelurahan with enhanced styling
+const adminKelurahanAR = L.layerGroup();
+$.getJSON("./asset/data-spasial/admin_kelurahan_ln.geojson", function (data) {
+  L.geoJSON(data, {
+    style: function(feature) {
+      return {
+        color: "#641B2E",
+        weight: 3,
+        opacity: 0.7,
+        dashArray: '5, 10',
+        lineJoin: 'round'
+      };
+    },
+    onEachFeature: function(feature, layer) {
+      if (feature.properties) {
+        const popupContent = `
+          <div class="custom-popup">
+            <div class="popup-header">Informasi Administrasi</div>
+            <div class="popup-content">
+              <p><strong>Kelurahan:</strong> ${feature.properties.KELURAHAN || feature.properties.name || 'N/A'}</p>
+              <p><strong>Kecamatan:</strong> ${feature.properties.KECAMATAN || 'N/A'}</p>
+            </div>
+          </div>
+        `;
+        layer.bindPopup(popupContent);
+      }
+      
+      layer.on({
+        mouseover: function(e) {
+          layer.setStyle({
+            weight: 5,
+            color: "#BE5B50",
+            opacity: 1
+          });
+        },
+        mouseout: function(e) {
+          layer.setStyle({
+            weight: 3,
+            color: "#641B2E",
+            opacity: 0.7,
+            dashArray: '5, 10'
+          });
+        }
+      });
+    }
+  }).addTo(adminKelurahanAR);
+});
+adminKelurahanAR.addTo(map);
+
+// Layer: Land Cover with enhanced styling and interactivity
+const landcover = L.layerGroup();
+$.getJSON("./asset/data-spasial/landcover_ar.geojson", function (data) {
+  L.geoJSON(data, {
+    style: function (feature) {
+      // Custom color map for each landcover type
+      const colorMap = {
+        'Danau/Situ': { fill: "#97DBF2", border: "#4065EB" },
+        'Empang': { fill: "#97DBF2", border: "#4065EB" },
+        'Sungai': { fill: "#97DBF2", border: "#4065EB" },
+        'Hutan Rimba': { fill: "#38A800", border: "#38A800" },
+        'Perkebunan/Kebun': { fill: "#E9FFBE", border: "#38A800" },
+        'Permukiman dan Tempat Kegiatan': { fill: "#FBDB93", border: "#BE5B50" },
+        'Sawah': { fill: "#01FBBB", border: "#4065EB" },
+        'Semak Belukar': { fill: "#C9F4CA", border: "#00A52F" },
+        'Tanah Kosong/Gundul': { fill: "#FDFDFD", border: "#BE5B50" },
+        'Tegalan/Ladang': { fill: "#EDFF85", border: "#38A800" },
+        'Vegetasi Non Budidaya Lainnya': { fill: "#8BC276", border: "#38A800" }
+      };
+      
+      const landType = feature.properties.REMARK;
+      const colors = colorMap[landType] || { fill: "#CCCCCC", border: "#999999" };
+      
+      return {
+        fillColor: colors.fill,
+        fillOpacity: 0.6,
+        color: colors.border,
+        weight: 1,
+        opacity: 0.8
+      };
+    },
+    onEachFeature: function (feature, layer) {
+      // Enhanced popup with additional information
+      const area = feature.properties.SHAPE_Area ? (feature.properties.SHAPE_Area / 10000).toFixed(2) + ' Ha' : 'Tidak tersedia';
+      
+      const popupContent = `
+        <div class="custom-popup">
+          <div class="popup-header">Informasi Tutupan Lahan</div>
+          <div class="popup-content">
+            <p><strong>Jenis:</strong> ${feature.properties.REMARK}</p>
+            <p><strong>Luas Area:</strong> ${area}</p>
+          </div>
+        </div>
+      `;
+      
+      layer.bindPopup(popupContent);
+      
+      // Hover effects
+      layer.on({
+        mouseover: function(e) {
+          layer.setStyle({
+            fillOpacity: 0.85,
+            weight: 3
+          });
+        },
+        mouseout: function(e) {
+          layer.setStyle({
+            fillOpacity: 0.6,
+            weight: 1
+          });
+        }
+      });
+    }
+  }).addTo(landcover);
+});
+landcover.addTo(map);
+
+// Enhanced Layer controls with custom styling
+const baseMaps = {
+  "OpenStreetMap": basemapOSM,
+  "OSM Humanitarian": osmHOT,
+  "Google Maps": baseMapGoogle,
+  "Google Satellite": satelliteMapGoogle,
+  "Dark Mode": darkMap
+};
+
+const overlayMaps = {
+  "Tutupan Lahan": landcover,
+  "Batas Administrasi": adminKelurahanAR,
+  "Jembatan": jembatanPT
+};
+
+const layerControl = L.control.layers(baseMaps, overlayMaps, {
+  position: 'topright',
+  collapsed: false
+}).addTo(map);
+
+// Enhanced Legend
+const legend = L.control({position: 'bottomleft'});
+
+legend.onAdd = function (map) {
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML = `
+    <h4>Legenda Tutupan Lahan</h4>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-color" style="background: #97DBF2;"></span>
+        <span>Danau/Situ/Empang/Sungai</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #38A800;"></span>
+        <span>Hutan Rimba</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #E9FFBE;"></span>
+        <span>Perkebunan/Kebun</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #FBDB93;"></span>
+        <span>Permukiman dan Tempat Kegiatan</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #01FBBB;"></span>
+        <span>Sawah</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #C9F4CA;"></span>
+        <span>Semak Belukar</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #FDFDFD;"></span>
+        <span>Tanah Kosong/Gundul</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #EDFF85;"></span>
+        <span>Tegalan/Ladang</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: #8BC276;"></span>
+        <span>Vegetasi Non Budidaya Lainnya</span>
+      </div>
+    </div>
+    
+    <h4 style="margin-top: 15px;">Simbol Lainnya</h4>
+    <div class="legend-items">
+      <div class="legend-item">
+        <span class="legend-color" style="background: #8A2D3B; border-radius: 50%;"></span>
+        <span>Jembatan</span>
+      </div>
+      <div class="legend-item">
+        <span class="legend-color" style="background: transparent; border: 2px dashed #641B2E;"></span>
+        <span>Batas Administrasi</span>
+      </div>
+    </div>
+  `;
+  return div;
+};
+
+legend.addTo(map);
+
+// Add info panel on the top left
+const infoPanel = L.control({position: 'topleft'});
+
+infoPanel.onAdd = function (map) {
+  const div = L.DomUtil.create('div', 'info');
+  div.style.padding = '6px 8px';
+  div.style.background = 'rgba(255,255,255,0.8)';
+  div.style.borderRadius = '5px';
+  div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
+  div.innerHTML = '<h4 style="margin: 0 0 5px; color: #641B2E;">Kota Bandung</h4>' + 
+                  '<p style="margin: 0; font-size: 12px;"> untuk melihat informasi</p>';
+  return div;
+};
+
+infoPanel.addTo(map);
+
+
+
+// Add scale control
+L.control.scale({
+  metric: true,
+  imperial: false,
+  position: 'bottomleft'
+}).addTo(map);
+
+// Add smooth scroll animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section').forEach(section => {
+  observer.observe(section);
+});
+
+// Preloader
+window.addEventListener('load', function() {
+  // Add preloader animation here if needed
+  console.log('WebGIS Kota Bandung loaded successfully');
+});
+
+// Add layer switcher animation
+document.querySelector('.leaflet-control-layers-toggle').addEventListener('click', function() {
+  console.log('Layer control toggled');
+});
+
+// Helper function for responsiveness
+function handleResponsive() {
+  if (window.innerWidth <= 768) {
+    // Mobile-specific adjustments
+    map.setMinZoom(11);
+  } else {
+    // Desktop-specific adjustments
+    map.setMinZoom(10);
+  }
+}
+
+// Run on load and resize
+handleResponsive();
+window.addEventListener('resize', handleResponsive);
+
+// Statistics counter animation
+function animateValue(id, start, end, duration) {
+  if (document.getElementById(id)) {
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      const value = Math.floor(progress * (end - start) + start);
+      document.getElementById(id).textContent = value;
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
+    };
+    window.requestAnimationFrame(step);
+  }
+}
+
+// Welcome message
+console.log('Welcome to WebGIS Kota Bandung - Interactive Spatial Exploration');
+</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const ctx = document.getElementById('bandungChart').getContext('2d');
+const bandungChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Wisatawan', 'Hotel', 'Kuliner', 'Transportasi', 'Event'],
+    datasets: [{
+      label: 'Indeks Populer Bandung',
+      data: [85, 70, 90, 60, 75],
+      backgroundColor: [
+        '#641B2E',
+        '#8A2D3B',
+        '#BE5B50',
+        '#FBDB93',
+        '#333'
+      ],
+      borderRadius: 5
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+</script>
+<style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+    }
+
+    .section {
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .info {
+      padding: 10px;
+      background-color: #fafafa;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const apiKey = "11ff8556f92661caf8575a96a8c7950c";
+    const aqiApiKey = "ebeed99cd6b48352766114c4ce184ad6fb952821";
+    const lat = -6.9147; // Koordinat Bandung
+    const lon = 107.6098;
+
+    // Fungsi untuk mengambil data cuaca
+    function fetchWeather() {
+      const apiUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric&lang=id`;
+
+      fetch(apiUrl)
+        .then(response => response.json())
+        .then(data => {
+          const cuaca = data.weather[0].description;
+          const suhu = data.main.temp;
+          const kelembapan = data.main.humidity;
+          const angin = data.wind.speed;
+          const waktu = new Date().toLocaleString("id-ID", {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+            timeZone: 'Asia/Jakarta'
+          });
+
+          const weatherHTML = `
+            <strong>${cuaca.charAt(0).toUpperCase() + cuaca.slice(1)}</strong><br>
+             Suhu: ${suhu}°C<br>
+             Kelembapan: ${kelembapan}%<br>
+             Angin: ${angin} m/s<br>
+             Update: ${waktu} WIB<br>
+            <small>Sumber: OpenWeatherMap</small>
+          `;
+          document.getElementById("weather-info").innerHTML = weatherHTML;
+        })
+        .catch(error => {
+          console.error("Cuaca Error:", error);
+          document.getElementById("weather-info").innerHTML = "Gagal memuat data cuaca.";
+        });
+    }
+
+    // Fungsi untuk mengambil data AQI
+    function fetchAQI() {
+      const aqiUrl = `https://api.waqi.info/feed/geo:${lat};${lon}/?token=${aqiApiKey}`;
+
+      fetch(aqiUrl)
+        .then(response => response.json())
+        .then(data => {
+          if (data.status === "ok") {
+            const aqi = data.data.aqi;
+            const dominan = data.data.dominentpol || "-";
+            const waktu = new Date().toLocaleString("id-ID", {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+              timeZone: 'Asia/Jakarta'
+            });
+
+            const aqiHTML = `
+              <strong>Indeks Kualitas Udara: ${aqi}</strong><br>
+               Polutan Dominan: ${dominan.toUpperCase()}<br>
+               Update: ${waktu} WIB<br>
+              <small>Sumber: World Air Quality Index</small>
+            `;
+            document.getElementById("aqi-info").innerHTML = aqiHTML;
+          } else {
+            document.getElementById("aqi-info").innerHTML = "Gagal memuat data AQI.";
+          }
+        })
+        .catch(error => {
+          console.error("AQI Error:", error);
+          document.getElementById("aqi-info").innerHTML = "Terjadi kesalahan saat mengambil data AQI.";
+        });
+    }
+
+    // Panggil fungsi fetchWeather dan fetchAQI saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", () => {
+      fetchWeather();
+      fetchAQI();
+    });
+  </script>
+
+</body>
+</html>
+</body>
+</html>

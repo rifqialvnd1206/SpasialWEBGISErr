@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebGIS Kota Bandung</title>
+    <style>
+        :root {
+            /* Modern color palette */
+            --primary-color: #2F7ABF;
+            --secondary-color: #3D9970;
+            --accent-color: #FF8B3D;
+            --light-color: #F7F9FB;
+            --dark-color: #2C3E50;
+            --gray-color: #95A5A6;
+            --white-color: #FFFFFF;
+            --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-color);
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* Header styles */
+        #navbar {
+            background-color: var(--primary-color);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: background-color 0.3s ease;
+        }
+
+        #navbar .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
+            height: 50px;
+            width: auto;
+        }
+
+        .logo h1 {
+            color: var(--white-color);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav ul li a {
+            color: var(--white-color);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Hero section */
+        .hero-section {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://cdn.pixabay.com/photo/2017/03/27/14/49/asia-2179107_1280.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--white-color);
+            padding-top: 70px;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        /* Map section */
+        #map-section {
+            padding: 80px 0 40px;
+            text-align: center;
+        }
+
+        #map-section h2 {
+            margin-bottom: 30px;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        #map {
+            height: 600px;
+            width: 90%;
+            margin: 0 auto;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        /* Data section */
+        #data-section {
+            padding: 60px 0;
+            background-color: var(--white-color);
+        }
+
+        #data-section h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: var(--primary-color);
+            font-size: 2rem;
+        }
+
+        .data-item {
+            display: flex;
+            margin-bottom: 30px;
+            background-color: var(--light-color);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+        }
+
+        .data-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .data-item img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+        }
+
+        .description {
+            padding: 20px;
+        }
+
+        .description h3 {
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        .description p {
+            color: var(--dark-color);
+            font-size: 0.95rem;
+        }
+
+        .column {
+            margin-bottom: 30px;
+        }
+
+        /* Author section */
+        #author-section {
+            padding: 60px 0;
+            background-color: var(--primary-color);
+            color: var(--white-color);
+            text-align: center;
+        }
+
+        .author-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .author-content h2 {
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--white-color);
+            margin-bottom: 20px;
+        }
+
+        .author-name h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Footer */
+        #footer {
+            background-color: var(--dark-color);
+            color: var(--white-color);
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        .footer-content h3 {
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+
+        .footer-content p {
+            margin: 5px 0;
+        }
+
+        /* Responsive */
+        @media (min-width: 768px) {
+            .container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+            }
+
+            .column {
+                flex: 0 0 calc(50% - 15px);
+            }
+        }
+
+        @media (min-width: 992px) {
+            .column {
+                flex: 0 0 calc(33.333% - 20px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+
+            nav ul {
+                gap: 10px;
+            }
+
+            nav ul li a {
+                padding: 5px 8px;
+                font-size: 0.9rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .data-item {
+                flex-direction: column;
+            }
+
+            .data-item img {
+                width: 100%;
+                height: 200px;
+            }
+        }
+
+        /* Map Legend Styles */
+        .info {
+            padding: 6px 8px;
+            font: 14px/16px Arial, Helvetica, sans-serif;
+            background: white;
+            background: rgba(255,255,255,0.8);
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            border-radius: 5px;
+        }
+        .info h4 {
+            margin: 0 0 5px;
+            color: #777;
+        }
+        .legend {
+            line-height: 18px;
+            color: #555;
+        }
+        .legend i {
+            width: 18px;
+            height: 18px;
+            float: left;
+            margin-right: 8px;
+            opacity: 0.7;
+        }
+    </style>
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    
+    <!-- Leaflet Fullscreen Plugin CSS -->
+    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+    
+    <!-- Leaflet Locate Control CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+    
+    <!-- Leaflet Shapefile Plugin CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+</head>
+
+<body>
+    <header id="navbar"> 
+        <div class="container"> 
+            <div class="logo"> 
+                <img src="asset/Logo Kota Bandung.png" alt="Logo" width="50"> 
+                <h1>WebGIS Kota Bandung</h1> 
+            </div> 
+            <nav> 
+                <ul> 
+                    <li><a href="#hero-section">Home</a></li> 
+                    <li><a href="#map-section">Map</a></li> 
+                    <li><a href="#data-section">Data</a></li> 
+                    <li><a href="#author-section">Author</a></li> 
+                    <li><a href="#footer">Contact</a></li> 
+                </ul> 
+            </nav> 
+        </div> 
+    </header> 
+    
+    <div id="hero-section" class="hero-section"> 
+        <div class="hero-content"> 
+            <h1>WebGIS Basis Data Spasial Kota Bandung</h1> 
+            <p>Eksplorasi Basis Data Spasial di Kota Bandung dengan Interface Modern</p> 
+        </div> 
+    </div> 
+    
+    <div id="map-section"> 
+        <h2>Jelajahi WebGIS Basis Data Spasial Kota Bandung</h2> 
+        <div id="map"></div> 
+    </div> 
+    
+    <div id="data-section"> 
+        <h2>Data Tersedia</h2> 
+        <div class="container"> 
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="asset/logo upi.png" alt="Peta Kecamatan"> 
+                    <div class="description"> 
+                        <h3>Peta Kecamatan</h3> 
+                        <p>Peta administratif yang menampilkan batas-batas kecamatan di Kota Bandung. Data ini memuat informasi tentang 30 kecamatan yang ada di Kota Bandung beserta data statistik terkait populasi, luas wilayah, dan kepadatan penduduk.</p> 
+                    </div> 
+                </div> 
+            </div> 
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="https://api.placeholder.com/150/150" alt="Peta Jalan"> 
+                    <div class="description"> 
+                        <h3>Peta Jaringan Jalan</h3> 
+                        <p>Data shapefile jaringan jalan di Kota Bandung yang memuat informasi tentang jalan utama, jalan kolektor, dan jalan lingkungan. Data ini berguna untuk analisis aksesibilitas dan perencanaan transportasi di Kota Bandung.</p> 
+                    </div> 
+                </div> 
+            </div> 
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="https://api.placeholder.com/150/150" alt="Peta Penggunaan Lahan"> 
+                    <div class="description"> 
+                        <h3>Peta Penggunaan Lahan</h3> 
+                        <p>Data penggunaan lahan Kota Bandung yang dibagi menjadi beberapa kategori seperti permukiman, komersial, industri, ruang terbuka hijau, dan fasilitas umum. Data ini bermanfaat untuk analisis tata ruang dan perencanaan kota.</p> 
+                    </div> 
+                </div> 
+            </div>
+        </div> 
+        <div class="container"> 
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="https://api.placeholder.com/150/150" alt="Peta Topografi"> 
+                    <div class="description"> 
+                        <h3>Peta Topografi</h3> 
+                        <p>Data ketinggian dan kontur di Kota Bandung yang menampilkan variasi elevasi di seluruh wilayah kota. Data ini berguna untuk analisis kemiringan lereng, aliran air, dan perencanaan infrastruktur.</p> 
+                    </div> 
+                </div> 
+            </div> 
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="https://api.placeholder.com/150/150" alt="Peta Fasilitas Umum"> 
+                    <div class="description"> 
+                        <h3>Peta Fasilitas Umum</h3> 
+                        <p>Data lokasi fasilitas umum di Kota Bandung seperti sekolah, rumah sakit, pusat perbelanjaan, kantor pemerintahan, dan tempat wisata. Data ini bermanfaat untuk analisis sebaran fasilitas dan perencanaan pelayanan publik.</p> 
+                    </div> 
+                </div> 
+            </div>
+            <div class="column"> 
+                <div class="data-item"> 
+                    <img src="https://api.placeholder.com/150/150" alt="Peta Risiko Bencana"> 
+                    <div class="description"> 
+                        <h3>Peta Risiko Bencana</h3> 
+                        <p>Data zonasi risiko bencana di Kota Bandung, termasuk daerah rawan banjir, longsor, dan gempa bumi. Data ini penting untuk mitigasi bencana dan perencanaan tanggap darurat di wilayah Kota Bandung.</p> 
+                    </div> 
+                </div> 
+            </div>
+        </div> 
+    </div> 
+    
+    <div id="author-section"> 
+        <div class="author-content"> 
+            <h2>Tentang Pembuat</h2> 
+            <img src="assets/foto babang.jpg" alt="Profile Picture" class="profile-picture"> 
+            <div class="author-name"> 
+                <h3>Muhammad Akhdan Putra Prasetyo</h3> 
+            </div> 
+            <p>Seorang Analis Sistem Informasi Geografis (SIG) dengan pengalaman 7 tahun dalam 
+mengerjakan proyek dari pemerintah dan swasta baik dalam pekerjaan proyek maupun pelatihan SIG. 
+Pekerja keras dan rajin dalam bekerja. Saat ini memiliki minat pada SIG, penginderaan jauh, 
+WebGIS, dan SIG untuk mitigasi bencana dan termotivasi untuk terus belajar dan berkembang sebagai 
+analis SIG.</p> 
+        </div>
+    </div>
+    
+    <div id="footer"> 
+        <div class="footer-content"> 
+            <h3>Hubungi Saya</h3> 
+            <p>Email: akhdanputra90@gmail.com</p> 
+            <p>Phone: 083818057266</p> 
+        </div> 
+    </div> 
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
+    <!-- Leaflet Fullscreen Plugin -->
+    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
+    
+    <!-- Leaflet Locate Control -->
+    <script src="https://cdn.jsdelivr.net/npm/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+    
+    <!-- Leaflet Shapefile Plugin -->
+    <script src="https://unpkg.com/leaflet-omnivore/leaflet-omnivore.min.js"></script>
+    <script src="https://unpkg.com/shpjs@latest/dist/shp.js"></script>
+    
+    
